@@ -27,6 +27,10 @@ class _PulmonaryState extends State<Pulmonary> {
   void handleSubmit() {
     bool areAllQuestionsAnswered =
         questions.every((element) => element['isAnswered'] == true);
+    final unAnsweredQuestionIndex = questions.indexWhere(
+      (element) => element['isAnswered'] == false,
+    );
+
     if (areAllQuestionsAnswered) {
       showDialog(
         context: context,
@@ -49,9 +53,29 @@ class _PulmonaryState extends State<Pulmonary> {
         },
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please answer all questions'),
+      ScaffoldMessenger.of(context).showMaterialBanner(
+        MaterialBanner(
+          leading: const Icon(
+            Icons.error,
+            color: Colors.red,
+          ),
+          content: const Text(
+            'Please answer all questions',
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentMaterialBanner();
+                pageController.animateToPage(unAnsweredQuestionIndex,
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.fastLinearToSlowEaseIn);
+              },
+              style: ElevatedButton.styleFrom(
+                elevation: 0,
+              ),
+              child: const Text('OK'),
+            ),
+          ],
         ),
       );
     }

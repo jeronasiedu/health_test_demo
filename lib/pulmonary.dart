@@ -23,6 +23,15 @@ class _PulmonaryState extends State<Pulmonary> {
     });
   }
 
+  var buttonStyle = ElevatedButton.styleFrom(
+    onPrimary: Colors.white,
+    elevation: 0,
+  );
+  final pageController = PageController(
+    initialPage: 1,
+  );
+  int currentPageIndex = 0;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +40,12 @@ class _PulmonaryState extends State<Pulmonary> {
       ),
       body: PageView.builder(
         itemCount: questions.length,
+        controller: pageController,
+        onPageChanged: (value) {
+          setState(() {
+            currentPageIndex = value;
+          });
+        },
         itemBuilder: (context, builderIndex) {
           return Padding(
             padding: const EdgeInsets.all(12.0),
@@ -69,6 +84,42 @@ class _PulmonaryState extends State<Pulmonary> {
             ),
           );
         },
+      ),
+      bottomSheet: Container(
+        height: 70,
+        width: double.infinity,
+        color: Theme.of(context).secondaryHeaderColor,
+        child: currentPageIndex == questions.length - 1
+            ? ElevatedButton(
+                style: buttonStyle,
+                onPressed: () {},
+                child: const Text('Submit'),
+              )
+            : Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  ElevatedButton(
+                    style: buttonStyle,
+                    onPressed: () {
+                      pageController.previousPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.fastOutSlowIn,
+                      );
+                    },
+                    child: const Text('Previous'),
+                  ),
+                  ElevatedButton(
+                    style: buttonStyle,
+                    onPressed: () {
+                      pageController.nextPage(
+                        duration: const Duration(milliseconds: 300),
+                        curve: Curves.fastOutSlowIn,
+                      );
+                    },
+                    child: const Text('Next'),
+                  ),
+                ],
+              ),
       ),
     );
   }

@@ -20,7 +20,41 @@ class _PulmonaryState extends State<Pulmonary> {
           totalScore += questions[builderIndex]['score'][i];
         }
       }
+      questions[builderIndex]['isAnswered'] = true;
     });
+  }
+
+  void handleSubmit() {
+    bool areAllQuestionsAnswered =
+        questions.every((element) => element['isAnswered'] == true);
+    if (areAllQuestionsAnswered) {
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text('Result'),
+            content: Text(
+              'Total Score: $totalScore',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+                child: const Text('OK'),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please answer all questions'),
+        ),
+      );
+    }
   }
 
   var buttonStyle = ElevatedButton.styleFrom(
@@ -92,7 +126,7 @@ class _PulmonaryState extends State<Pulmonary> {
         child: currentPageIndex == questions.length - 1
             ? ElevatedButton(
                 style: buttonStyle,
-                onPressed: () {},
+                onPressed: handleSubmit,
                 child: const Text('Submit'),
               )
             : Row(
